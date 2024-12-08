@@ -1,4 +1,4 @@
-using BozgaAlbertoHoratiuLab7.Models;
+﻿using BozgaAlbertoHoratiuLab7.Models;
 namespace BozgaAlbertoHoratiuLab7;
 
 public partial class ListPage : ContentPage
@@ -20,4 +20,28 @@ public partial class ListPage : ContentPage
         await App.Database.DeleteShopListAsync(slist);
         await Navigation.PopAsync();
     }
+    async void OnChooseButtonClicked(object sender, EventArgs e)
+    {
+        await Navigation.PushAsync(new ProductPage((ShopList)
+       this.BindingContext)
+        {
+            BindingContext = new Product()
+        });
+
+    }
+    async void OnDeleteItemButtonClicked(object sender, EventArgs e)
+    {
+        var selectedItem = listView.SelectedItem as Product;
+        if (selectedItem != null)
+        {
+            await App.Database.DeleteProductAsync(selectedItem); // Șterge produsul selectat
+            listView.ItemsSource = await App.Database.GetProductsAsync(); // Actualizează lista
+        }
+        else
+        {
+            await DisplayAlert("Error", "Please select an item to delete.", "OK");
+        }
+    }
+
+
 }
